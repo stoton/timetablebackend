@@ -1,7 +1,7 @@
 package com.github.stoton.timetablebackend.parser.optivum;
 
-import com.github.stoton.timetablebackend.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.domain.TimetableType;
+import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.TimetableTypeRecognizer;
 
 public class OptivumTimetableTypeRecognizer implements TimetableTypeRecognizer {

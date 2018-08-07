@@ -1,4 +1,4 @@
-package com.github.stoton.timetablebackend;
+package com.github.stoton.timetablebackend.exception;
 
 public class UnknownTimetableTypeException extends Exception {
 

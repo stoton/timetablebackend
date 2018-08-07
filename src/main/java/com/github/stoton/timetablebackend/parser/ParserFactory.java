@@ -5,7 +5,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ParserFactory {
 
-
     public TimetableParser getTimetableParser(TimetableProperties timetableProperties) {
         throw new NotImplementedException();
     }
