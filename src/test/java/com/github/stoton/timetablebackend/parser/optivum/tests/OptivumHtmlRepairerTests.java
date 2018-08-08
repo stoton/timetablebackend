@@ -80,6 +80,4 @@ public class OptivumHtmlRepairerTests {
 
         assertEquals(expected, actual);
     }
-
-
 }

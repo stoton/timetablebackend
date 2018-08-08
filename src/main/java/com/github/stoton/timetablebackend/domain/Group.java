@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Group {
 
-    private String clazz;
+    private String student;
     private String teacher;
     private String subject;
     private String room;
