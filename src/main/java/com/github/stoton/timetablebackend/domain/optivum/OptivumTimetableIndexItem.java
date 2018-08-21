@@ -1,4 +1,4 @@
-package com.github.stoton.timetablebackend.domain.optivium;
+package com.github.stoton.timetablebackend.domain.optivum;
 
 import com.github.stoton.timetablebackend.domain.TimetableType;
 import lombok.Data;
@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 @Entity
-public class OptiviumTimetableIndexItem {
+public class OptivumTimetableIndexItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

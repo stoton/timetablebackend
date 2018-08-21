@@ -1,6 +1,8 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
-import com.github.stoton.timetablebackend.parser.optivum.OptiviumHtmlRepairer;
+import com.github.stoton.timetablebackend.parser.optivum.OptivumHtmlRepairer;
+import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategy;
+import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStudentStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,20 +15,21 @@ import static org.junit.Assert.assertFalse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class OptivumHtmlRepairerTests {
+public class OptivumTimetableStudentHtmlRepairerTests {
 
-    private OptiviumHtmlRepairer optiviumHtmlRepairer;
+    private OptivumHtmlRepairer optivumHtmlRepairer;
 
     @Before
     public void init() {
-        optiviumHtmlRepairer = new OptiviumHtmlRepairer();
+        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableStudentStrategy();
+        optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
 
     @Test
     public void isHtmlValidWhenHtmlIsCorrectTest() {
         String html = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
 
-        boolean actual = optiviumHtmlRepairer.isHtmlValid(html);
+        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
 
         assertTrue(actual);
     }
@@ -37,7 +40,7 @@ public class OptivumHtmlRepairerTests {
                 "<span style=\"font-size:85%\"><span class=\"p\">wf-2/2" +
                 "</span> <a href=\"n8.html\" class=\"n\">CU</a> <span class=\"s\">@</span></span>";
 
-        boolean actual = optiviumHtmlRepairer.isHtmlValid(html);
+        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
         assertFalse(actual);
     }
 
@@ -46,7 +49,7 @@ public class OptivumHtmlRepairerTests {
         String html = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
         String expected = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
 
-        String actual = optiviumHtmlRepairer.fixHtml(html);
+        String actual = optivumHtmlRepairer.fixHtml(html);
 
         assertEquals(expected, actual);
     }
@@ -61,7 +64,7 @@ public class OptivumHtmlRepairerTests {
                 "<span style=\"font-size:85%\"><span class=\"p\">wf-2/2" +
                 "</span> <a href=\"n8.html\" class=\"n\">CU</a> <span class=\"s\">@</span></span>";
 
-        String actual = optiviumHtmlRepairer.fixHtml(html);
+        String actual = optivumHtmlRepairer.fixHtml(html);
 
         assertEquals(expected, actual);
     }
@@ -76,7 +79,7 @@ public class OptivumHtmlRepairerTests {
                 " <span class=\"s\">@</span><br><span class=\"p\">wf-2/2 </span>" +
                 "<span class=\"n\">#W2</span> <span class=\"s\">@</span>";
 
-        String actual = optiviumHtmlRepairer.fixHtml(html);
+        String actual = optivumHtmlRepairer.fixHtml(html);
 
         assertEquals(expected, actual);
     }

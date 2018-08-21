@@ -9,7 +9,7 @@ public class OptivumTimetableParser implements TimetableParser {
 
     @Override
     public Timetable parseTimetable(String url, TimetableTypeRecognizer timetableTypeRecognizer) throws UnknownTimetableTypeException {
-        timetableTypeRecognizer.recognizeTimetableType(url);
+        timetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 
         return null;
     }

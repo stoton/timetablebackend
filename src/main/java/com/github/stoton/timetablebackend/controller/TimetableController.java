@@ -1,6 +1,6 @@
 package com.github.stoton.timetablebackend.controller;
 
-import com.github.stoton.timetablebackend.domain.optivium.OptiviumTimetableIndexItem;
+import com.github.stoton.timetablebackend.domain.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.repository.TimetableIndexItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +17,13 @@ public class TimetableController {
 
     @GetMapping("/databaseTest")
     public void test() {
-        OptiviumTimetableIndexItem optiviumTimetableIndexItem = new OptiviumTimetableIndexItem();
-        optiviumTimetableIndexItem.setFullName("Test");
-        optiviumTimetableIndexItem.setLink("test");
-        optiviumTimetableIndexItem.setShortName("Teeest");
+        OptivumTimetableIndexItem optivumTimetableIndexItem = new OptivumTimetableIndexItem();
+        optivumTimetableIndexItem.setFullName("Test");
+        optivumTimetableIndexItem.setLink("test");
+        optivumTimetableIndexItem.setShortName("Teeest");
 
 
-        timetableIndexItemRepository.save(optiviumTimetableIndexItem);
+        timetableIndexItemRepository.save(optivumTimetableIndexItem);
     }
 
     @GetMapping(value = "/schools/0/timetables/0", produces = APPLICATION_JSON_VALUE)

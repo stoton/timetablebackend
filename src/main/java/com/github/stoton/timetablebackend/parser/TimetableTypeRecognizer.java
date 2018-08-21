@@ -5,5 +5,7 @@ import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeExceptio
 
 public interface TimetableTypeRecognizer {
 
-    TimetableType recognizeTimetableType(String url) throws UnknownTimetableTypeException;
+    TimetableType recognizeTimetableTypeByUrl(String url) throws UnknownTimetableTypeException;
+
+    TimetableType recognizeTimetableTypeByContent(String content) throws UnknownTimetableTypeException;
 }

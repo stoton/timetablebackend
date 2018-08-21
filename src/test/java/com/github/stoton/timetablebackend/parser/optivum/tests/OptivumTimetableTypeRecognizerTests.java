@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class OptiviumTimetableTypeRecognizerTests {
+public class OptivumTimetableTypeRecognizerTests {
 
     private OptivumTimetableTypeRecognizer optiviumTimetableTypeRecognizer;
 
@@ -28,7 +28,7 @@ public class OptiviumTimetableTypeRecognizerTests {
 
         TimetableType expected = TimetableType.STUDENT;
 
-        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableType(url);
+        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 
         assertEquals(expected, actual);
     }
@@ -39,7 +39,7 @@ public class OptiviumTimetableTypeRecognizerTests {
 
         TimetableType expected = TimetableType.TEACHER;
 
-        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableType(url);
+        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 
         assertEquals(expected, actual);
     }
@@ -50,7 +50,7 @@ public class OptiviumTimetableTypeRecognizerTests {
 
         TimetableType expected = TimetableType.ROOM;
 
-        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableType(url);
+        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 
         assertEquals(expected, actual);
     }
@@ -60,13 +60,56 @@ public class OptiviumTimetableTypeRecognizerTests {
     public void recognizeTimetableWhenUrlIsIncorrect() throws UnknownTimetableTypeException {
         String url = "http://google.com";
 
-        TimetableType timetableType = optiviumTimetableTypeRecognizer.recognizeTimetableType(url);
+        optiviumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
     }
 
     @Test(expected = UnknownTimetableTypeException.class)
     public void recognizeTimetableWhenSymbolIsIncorrect() throws UnknownTimetableTypeException {
         String url =  "http://szkola.zsat.linuxpl.eu/planlekcji/plany/g1.html";
 
-        TimetableType timetableType = optiviumTimetableTypeRecognizer.recognizeTimetableType(url);
+        optiviumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
+    }
+
+    @Test
+    public void recognizeStudentTimetableWhenContentIsCorrect() throws UnknownTimetableTypeException {
+        String content = "<title>Plan lekcji oddziału 113</title>";
+
+        TimetableType expected = TimetableType.STUDENT;
+
+        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableTypeByContent(content);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void recognizeTeacherTimetableWhenContentIsCorrect() throws UnknownTimetableTypeException {
+        String content = "<title>Plan lekcji nauczyciela A. Kucharska </title>";
+
+        TimetableType expected = TimetableType.TEACHER;
+
+        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableTypeByContent(content);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void recognizeRoomTimetableWhenContentIsCorrect() throws UnknownTimetableTypeException {
+        String content = "<title>Plan lekcji sali 133 </title>";
+
+        TimetableType expected = TimetableType.ROOM;
+
+        TimetableType actual = optiviumTimetableTypeRecognizer.recognizeTimetableTypeByContent(content);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test(expected = UnknownTimetableTypeException.class)
+    public void recognizeTimetableWhenContentIsIncorrect() throws UnknownTimetableTypeException {
+        String content = "incorrect something sala";
+
+
+        optiviumTimetableTypeRecognizer.recognizeTimetableTypeByContent(content);
+
+
     }
 }
