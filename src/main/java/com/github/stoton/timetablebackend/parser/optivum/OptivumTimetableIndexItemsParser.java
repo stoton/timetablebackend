@@ -24,11 +24,19 @@ public class OptivumTimetableIndexItemsParser {
 
     public List<OptivumTimetableIndexItem> parseIndexItems(Document html) throws UnknownTimetableTypeException {
         List<OptivumTimetableIndexItem> optivumTimetableIndexItems = new ArrayList<>();
+
+
         Elements timetableIndexItems = html.select("a");
 
         for (Element timetableIndexItem : timetableIndexItems) {
 
+            String href = timetableIndexItem.attr("href");
+
+
+            System.out.println(href);
+            if(!href.startsWith("plany") || !href.endsWith("html")) continue;
             String url = ROOT_URL + timetableIndexItem.attr("href");
+
 
             TimetableType timetableType = optivumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 
