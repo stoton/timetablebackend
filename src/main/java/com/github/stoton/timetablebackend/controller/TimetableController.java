@@ -1,11 +1,10 @@
 package com.github.stoton.timetablebackend.controller;
 
 import com.github.stoton.timetablebackend.domain.optivum.OptivumTimetableIndexItem;
+import com.github.stoton.timetablebackend.domain.school.School;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
-import com.github.stoton.timetablebackend.parser.TimetableParser;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableIndexItemsParser;
-import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableParser;
-import com.github.stoton.timetablebackend.repository.TimetableIndexItemRepository;
+import com.github.stoton.timetablebackend.repository.SchoolRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,42 +33,7 @@ public class TimetableController {
         return Flux.just(optivumTimetableIndexItemsParser.parseIndexItems(document));
     }
 
-    @GetMapping(value = "schools/{schoolId}", produces = APPLICATION_JSON_VALUE)
-    public Mono<String> getSchool() {
-        return Mono.just("{\n" +
-                "  \"id\": \"0\",\n" +
-                "  \"name\": \"ZSA-T Ropczyce\",\n" +
-                "  \"href\": \"http://www.zsat-ropczyce.pl\"\n" +
-                "}"
-        );
-    }
 
-    @GetMapping(value = "/schools", produces = APPLICATION_JSON_VALUE)
-    public Mono<String> getAllSchools() {
-        return Mono.just("[\n" +
-                "  {\n" +
-                "    \"id\": \"0\",\n" +
-                "    \"name\": \"ZSA-T Ropczyce\",\n" +
-                "    \"href\": \"http://www.zsat-ropczyce.pl\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"1\",\n" +
-                "    \"name\": \"Szkoła Specjalna\",\n" +
-                "    \"href\": \"http://szkola-specjalna.pl\"\n" +
-                "  }\n" +
-                "]"
-        );
-    }
-
-    @PostMapping(value = "/schools")
-    public void addSchool(@RequestBody String json) {
-        System.out.println(json);
-    }
-
-    @PutMapping(value = "/schools/{schoolId}")
-    public void editSchool(@RequestBody String json) {
-        System.out.println(json);
-    }
 
     @GetMapping(value = "/schools/{schoolId}/timetables", produces = APPLICATION_JSON_VALUE)
     public Mono<String> getAllTimetables() {

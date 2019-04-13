@@ -32,8 +32,6 @@ public class OptivumTimetableIndexItemsParser {
 
             String href = timetableIndexItem.attr("href");
 
-
-            System.out.println(href);
             if(!href.startsWith("plany") || !href.endsWith("html")) continue;
             String url = ROOT_URL + timetableIndexItem.attr("href");
 
