@@ -1,13 +1,10 @@
-package com.github.stoton.timetablebackend.controller;
+package com.github.stoton.timetablebackend.controller.timetable;
 
-import com.github.stoton.timetablebackend.domain.optivum.OptivumTimetableIndexItem;
-import com.github.stoton.timetablebackend.domain.school.School;
+import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableIndexItemsParser;
-import com.github.stoton.timetablebackend.repository.SchoolRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

@@ -1,6 +1,8 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.domain.Lesson;
+import com.github.stoton.timetablebackend.domain.timetable.Lesson;
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
@@ -9,24 +11,39 @@ import static com.github.stoton.timetablebackend.parser.optivum.strategy.Optivum
 
 public class OptivumTimetableRoomStrategy implements OptivumTimetableStrategy {
 
+    private static final String A_TAG_END = "</a>";
+
+    private TimetableType timetableType;
+
+    public OptivumTimetableRoomStrategy(TimetableType timetableType) {
+        this.timetableType = timetableType;
+    }
+
     @Override
     public List<Lesson> parseAllLessonsFromHtml(Document document) {
         return null;
     }
 
     @Override
-    public boolean isHtmlValid(String html) {
+    public String fixHtml(String html) throws UnknownTimetableTypeException {
 
-        int studentTags = html
-                .split(STUDENT_CLASS, -1).length - 1;
+        int indexOfElementToMerge;
 
-        int subjectTags = html
-                .split(SUBJECT_CLASS, -1).length - 1;
+        while (!isHtmlValid(html, timetableType)) {
+            StringBuilder correctHtml = new StringBuilder();
+            indexOfElementToMerge = getIndexOfElementToMerge(html);
 
-        int teacherTags = html
-                .split(TEACHER_CLASS, -1).length - 1;
+            if (indexOfElementToMerge == NO_OCCURRENCE) break;
 
-        return studentTags == subjectTags && studentTags == teacherTags &&
-                !hasClassPartOutOfTag(html);
+            correctHtml
+                    .append(appendHtmlUntilPartToMerge(html, indexOfElementToMerge - 7))
+                    .append(appendEndOfSpan(html, indexOfElementToMerge - 7, indexOfElementToMerge-4))
+                    .append(appendPartOfClassToMerge(html, indexOfElementToMerge, indexOfElementToMerge + 5))
+                    .append(A_TAG_END)
+                    .append(appendEndOfHtml(html, indexOfElementToMerge + 5));
+
+            html = correctHtml.toString();
+        }
+        return html;
     }
 }

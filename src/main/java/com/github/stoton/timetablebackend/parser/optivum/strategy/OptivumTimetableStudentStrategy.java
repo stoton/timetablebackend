@@ -1,15 +1,24 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.domain.Lesson;
+import com.github.stoton.timetablebackend.domain.timetable.Lesson;
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategyUtils.*;
 
 public  class OptivumTimetableStudentStrategy implements OptivumTimetableStrategy {
+
+    private static final String STUDENT_CLASS = "\"p\"";
+    private static final String TEACHER_CLASS = "\"n\"";
+
+    private TimetableType timetableType;
+
+    public OptivumTimetableStudentStrategy(TimetableType timetableType) {
+        this.timetableType = timetableType;
+    }
 
     @Override
     public List<Lesson> parseAllLessonsFromHtml(Document document) {
@@ -17,19 +26,13 @@ public  class OptivumTimetableStudentStrategy implements OptivumTimetableStrateg
     }
 
     @Override
-    public String fixHtml(String html) {
-        int indexOfElementToMerge = NO_OCCURRENCE;
+    public String fixHtml(String html) throws UnknownTimetableTypeException {
+        int indexOfElementToMerge;
 
-        Pattern pattern = Pattern.compile(OUTER_PART_OF_CLASS);
-        Matcher matcher = pattern.matcher(html);
-
-        while (!isHtmlValid(html)) {
-
+        while (!isHtmlValid(html, timetableType)) {
             StringBuilder correctHtml = new StringBuilder();
 
-            if (matcher.find()) {
-                indexOfElementToMerge = html.indexOf(matcher.group())+1;
-            }
+            indexOfElementToMerge = getIndexOfElementToMerge(html);
 
             if (indexOfElementToMerge == NO_OCCURRENCE) break;
 
@@ -44,22 +47,8 @@ public  class OptivumTimetableStudentStrategy implements OptivumTimetableStrateg
         return html;
     }
 
-    @Override
-    public boolean isHtmlValid(String html) {
-        int subjectClass = html
-                .split(SUBJECT_CLASS, -1).length - 1;
-
-        int teacherTags = html
-                .split(TEACHER_CLASS, -1).length - 1;
-
-        int roomTags = html
-                .split(ROOM_CLASS, -1).length - 1;
-
-        return subjectClass == teacherTags && subjectClass == roomTags &&
-                !hasClassPartOutOfTag(html);
-    }
-
     private String appendEndOfHtmlAndReplace(String html, int start) {
-        return html.substring(start).replaceFirst("\"p\"", "\"n\"");
+        return html.substring(start).replaceFirst(STUDENT_CLASS, TEACHER_CLASS);
     }
+
 }

@@ -1,5 +1,7 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumHtmlRepairer;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategy;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStudentStrategy;
@@ -21,31 +23,31 @@ public class OptivumTimetableStudentHtmlRepairerTests {
 
     @Before
     public void init() {
-        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableStudentStrategy();
+        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableStudentStrategy(TimetableType.STUDENT);
         optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
 
+//    @Test
+//    public void isHtmlValidWhenHtmlIsCorrectTest() {
+//        String html = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
+//
+//        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
+//
+//        assertTrue(actual);
+//    }
+//
+//    @Test
+//    public void isHtmlValidWhenHtmlIsIncorrectTest() {
+//        String html = "<span class=\"p\">wf</span>-1/2 <span class=\"p\">#W6</span> <span class=\"s\">@</span><br>" +
+//                "<span style=\"font-size:85%\"><span class=\"p\">wf-2/2" +
+//                "</span> <a href=\"n8.html\" class=\"n\">CU</a> <span class=\"s\">@</span></span>";
+//
+//        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
+//        assertFalse(actual);
+//    }
+
     @Test
-    public void isHtmlValidWhenHtmlIsCorrectTest() {
-        String html = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
-
-        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
-
-        assertTrue(actual);
-    }
-
-    @Test
-    public void isHtmlValidWhenHtmlIsIncorrectTest() {
-        String html = "<span class=\"p\">wf</span>-1/2 <span class=\"p\">#W6</span> <span class=\"s\">@</span><br>" +
-                "<span style=\"font-size:85%\"><span class=\"p\">wf-2/2" +
-                "</span> <a href=\"n8.html\" class=\"n\">CU</a> <span class=\"s\">@</span></span>";
-
-        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
-        assertFalse(actual);
-    }
-
-    @Test
-    public void fixHtmlWhenIsCorrectTest() {
+    public void fixHtmlWhenIsCorrectTest() throws UnknownTimetableTypeException {
         String html = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
         String expected = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
 
@@ -55,7 +57,7 @@ public class OptivumTimetableStudentHtmlRepairerTests {
     }
 
     @Test
-    public void fixHtmlWhenOneTagIsIncorrectTest() {
+    public void fixHtmlWhenOneTagIsIncorrectTest() throws UnknownTimetableTypeException {
         String html = "<span class=\"p\">wf</span>-1/2 <span class=\"p\">#W6</span> <span class=\"s\">@</span><br>" +
                 "<span style=\"font-size:85%\"><span class=\"p\">wf-2/2" +
                 "</span> <a href=\"n8.html\" class=\"n\">CU</a> <span class=\"s\">@</span></span>";
@@ -70,7 +72,7 @@ public class OptivumTimetableStudentHtmlRepairerTests {
     }
 
     @Test
-    public void fixHtmlWhenTwoTagsAreIncorrectTest() {
+    public void fixHtmlWhenTwoTagsAreIncorrectTest() throws UnknownTimetableTypeException {
         String html = "<span class=\"p\">wf</span>-1/2 <span class=\"p\">#W1</span>" +
                 " <span class=\"s\">@</span><br><span class=\"p\">wf</span>-2/2 " +
                 "<span class=\"p\">#W2</span> <span class=\"s\">@</span>";

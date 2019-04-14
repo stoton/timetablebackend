@@ -1,7 +1,7 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
-import com.github.stoton.timetablebackend.domain.TimetableType;
-import com.github.stoton.timetablebackend.domain.optivum.OptivumTimetableIndexItem;
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableIndexItemsParser;
 import org.jsoup.Jsoup;

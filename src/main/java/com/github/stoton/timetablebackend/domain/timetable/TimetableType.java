@@ -1,4 +1,4 @@
-package com.github.stoton.timetablebackend.domain;
+package com.github.stoton.timetablebackend.domain.timetable;
 
 public enum TimetableType {
     STUDENT("student"),

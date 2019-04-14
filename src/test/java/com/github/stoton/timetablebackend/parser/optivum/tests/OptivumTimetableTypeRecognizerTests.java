@@ -1,6 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
-import com.github.stoton.timetablebackend.domain.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableTypeRecognizer;
 import org.junit.Before;

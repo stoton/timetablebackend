@@ -1,5 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
+import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumHtmlRepairer;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategy;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableTeacherStrategy;
@@ -24,7 +25,7 @@ public class OptivumTimetableTeacherHtmlRepairerTests {
     }
 
     @Test
-    public void fixTeacherHtmlWhenOneTagIsIncorrectTest() {
+    public void fixTeacherHtmlWhenOneTagIsIncorrectTest() throws UnknownTimetableTypeException {
         String html = "<td class=\"l\"><span style=\"font-size:85%\"><a href=\"o11.html\" class=\"o\">2Tia</a>-2/2 "
                 +"<span class=\"p\">pra.w ob.at</span> <a href=\"s30.html\" class=\"s\">216</a><br></span></td>";
 
@@ -36,7 +37,7 @@ public class OptivumTimetableTeacherHtmlRepairerTests {
     }
 
     @Test
-    public void fixTeacherHtmlWhenTwoTagsAreIncorrectTest() {
+    public void fixTeacherHtmlWhenTwoTagsAreIncorrectTest() throws UnknownTimetableTypeException {
         String html = "<td class=\"l\"><a href=\"o2.html\" class=\"o\">3Tż</a>-1/2,<a href=\"o4.html\" class=\"o\">3TIG</a>-1/3 " +
                 "<span class=\"p\">wf</span> <span class=\"s\">@</span><br></td>";
 

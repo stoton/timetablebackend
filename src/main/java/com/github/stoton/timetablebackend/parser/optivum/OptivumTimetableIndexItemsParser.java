@@ -1,7 +1,7 @@
 package com.github.stoton.timetablebackend.parser.optivum;
 
-import com.github.stoton.timetablebackend.domain.TimetableType;
-import com.github.stoton.timetablebackend.domain.optivum.OptivumTimetableIndexItem;
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,7 +34,6 @@ public class OptivumTimetableIndexItemsParser {
 
             if(!href.startsWith("plany") || !href.endsWith("html")) continue;
             String url = ROOT_URL + timetableIndexItem.attr("href");
-
 
             TimetableType timetableType = optivumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 

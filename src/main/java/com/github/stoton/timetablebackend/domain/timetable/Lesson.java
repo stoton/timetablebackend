@@ -1,4 +1,4 @@
-package com.github.stoton.timetablebackend.domain;
+package com.github.stoton.timetablebackend.domain.timetable;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
