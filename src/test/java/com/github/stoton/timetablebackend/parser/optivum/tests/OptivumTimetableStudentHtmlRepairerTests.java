@@ -5,11 +5,15 @@ import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeExceptio
 import com.github.stoton.timetablebackend.parser.optivum.OptivumHtmlRepairer;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategy;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStudentStrategy;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.IOException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -26,25 +30,6 @@ public class OptivumTimetableStudentHtmlRepairerTests {
         OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableStudentStrategy(TimetableType.STUDENT);
         optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
-
-//    @Test
-//    public void isHtmlValidWhenHtmlIsCorrectTest() {
-//        String html = "<span class=\"p\">matematyka</span> <a href=\"n29.html\" class=\"n\">KJ</a> <a href=\"s8.html\" class=\"s\">204</a>";
-//
-//        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
-//
-//        assertTrue(actual);
-//    }
-//
-//    @Test
-//    public void isHtmlValidWhenHtmlIsIncorrectTest() {
-//        String html = "<span class=\"p\">wf</span>-1/2 <span class=\"p\">#W6</span> <span class=\"s\">@</span><br>" +
-//                "<span style=\"font-size:85%\"><span class=\"p\">wf-2/2" +
-//                "</span> <a href=\"n8.html\" class=\"n\">CU</a> <span class=\"s\">@</span></span>";
-//
-//        boolean actual = optivumHtmlRepairer.isHtmlValid(html);
-//        assertFalse(actual);
-//    }
 
     @Test
     public void fixHtmlWhenIsCorrectTest() throws UnknownTimetableTypeException {

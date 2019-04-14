@@ -1,5 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
+import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumHtmlRepairer;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategy;
@@ -20,20 +21,20 @@ public class OptivumTimetableTeacherHtmlRepairerTests {
 
     @Before
     public void init() {
-        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableTeacherStrategy();
+        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableTeacherStrategy(TimetableType.TEACHER);
         optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
 
     @Test
     public void fixTeacherHtmlWhenOneTagIsIncorrectTest() throws UnknownTimetableTypeException {
         String html = "<td class=\"l\"><span style=\"font-size:85%\"><a href=\"o11.html\" class=\"o\">2Tia</a>-2/2 "
-                +"<span class=\"p\">pra.w ob.at</span> <a href=\"s30.html\" class=\"s\">216</a><br></span></td>";
+                + "<span class=\"p\">pra.w ob.at</span> <a href=\"s30.html\" class=\"s\">216</a><br></span></td>";
 
         String expected = "<td class=\"l\"><span style=\"font-size:85%\"><a href=\"o11.html\" class=\"o\">2Tia-2/2 </a>"
-                +"<span class=\"p\">pra.w ob.at</span> <a href=\"s30.html\" class=\"s\">216</a><br></span></td>";
+                + "<span class=\"p\">pra.w ob.at</span> <a href=\"s30.html\" class=\"s\">216</a><br></span></td>";
 
         String actual = optivumHtmlRepairer.fixHtml(html);
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -46,8 +47,18 @@ public class OptivumTimetableTeacherHtmlRepairerTests {
 
         String actual = optivumHtmlRepairer.fixHtml(html);
 
+        assertEquals(expected, actual);
+    }
 
-        System.out.println(actual);
+    @Test
+    public void fixTeacherHtmlWhenTeacherHasTwoClassOnOneLessonTest() throws UnknownTimetableTypeException {
+        String html = "<td class=\"l\"><a href=\"o1.html\" class=\"o\">4Tż</a>-2/2,<a href=\"o3.html\" class=\"o\">4TIG</a>-1/3 " +
+                "<span class=\"p\">wf</span> <span class=\"s\">@</span><br></td>";
+
+        String expected = "<td class=\"l\"><a href=\"o1.html\" class=\"o\">4Tż-2/2</a><a href=\"o3.html\" class=\"o\">4TIG-1/3 </a>" +
+                "<span class=\"p\">wf</span> <span class=\"s\">@</span><br></td>";
+
+        String actual = optivumHtmlRepairer.fixHtml(html);
 
         assertEquals(expected, actual);
     }
