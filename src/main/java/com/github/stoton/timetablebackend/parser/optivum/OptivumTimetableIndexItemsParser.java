@@ -3,6 +3,7 @@ package com.github.stoton.timetablebackend.parser.optivum;
 import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
 import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
+import com.github.stoton.timetablebackend.parser.TimetableIndexItemsParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class OptivumTimetableIndexItemsParser {
+public class OptivumTimetableIndexItemsParser implements TimetableIndexItemsParser<OptivumTimetableIndexItem> {
 
     private OptivumTimetableTypeRecognizer optivumTimetableTypeRecognizer;
 
@@ -32,7 +33,7 @@ public class OptivumTimetableIndexItemsParser {
 
             String href = timetableIndexItem.attr("href");
 
-            if(!href.startsWith("plany") || !href.endsWith("html")) continue;
+            if (!href.startsWith("plany") || !href.endsWith("html")) continue;
             String url = ROOT_URL + timetableIndexItem.attr("href");
 
             TimetableType timetableType = optivumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
@@ -43,7 +44,7 @@ public class OptivumTimetableIndexItemsParser {
 
             optivumTimetableIndexItem.setTimetableType(timetableType);
             optivumTimetableIndexItem.setShortName(shortText);
-            optivumTimetableIndexItem.setFullName(toStringWithoutShortNameAndWhitespaces(timetableIndexItem));
+            optivumTimetableIndexItem.setFullName(toStringWithoutShortNameAndWhitespaces(timetableIndexItem, timetableType));
             optivumTimetableIndexItem.setLink(url);
 
             optivumTimetableIndexItems.add(optivumTimetableIndexItem);
@@ -51,13 +52,16 @@ public class OptivumTimetableIndexItemsParser {
         return optivumTimetableIndexItems;
     }
 
-    private String toStringWithoutShortNameAndWhitespaces(Element html) {
-        return html.text().replaceFirst("\\([A-Z]+\\)", "").replaceAll("\\s", "");
+    private String toStringWithoutShortNameAndWhitespaces(Element html, TimetableType timetableType) {
+        String fullName = html.text().replaceFirst("\\([A-Za-zŁ]+\\)", "")
+                .replaceAll("\\s", "");
+
+        return timetableType.equals(TimetableType.TEACHER) ? fullName.replace(".", ". ") : fullName;
     }
 
     private String parseShortName(Element element) {
 
-        Pattern pattern = Pattern.compile("\\([A-Z]+\\)");
+        Pattern pattern = Pattern.compile("\\([A-Za-zŁ]+\\)");
         Matcher matcher = pattern.matcher(element.toString());
 
         String shortName = "";

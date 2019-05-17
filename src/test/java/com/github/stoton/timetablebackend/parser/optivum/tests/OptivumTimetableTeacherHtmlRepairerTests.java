@@ -21,7 +21,7 @@ public class OptivumTimetableTeacherHtmlRepairerTests {
 
     @Before
     public void init() {
-        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableTeacherStrategy(TimetableType.TEACHER);
+        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableTeacherStrategy(TimetableType.TEACHER, 1L, null);
         optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
 
@@ -52,14 +52,15 @@ public class OptivumTimetableTeacherHtmlRepairerTests {
 
     @Test
     public void fixTeacherHtmlWhenTeacherHasTwoClassOnOneLessonTest() throws UnknownTimetableTypeException {
-        String html = "<td class=\"l\"><a href=\"o1.html\" class=\"o\">4Tż</a>-2/2,<a href=\"o3.html\" class=\"o\">4TIG</a>-1/3 " +
+        String html = "<td class=\"l\"><a href=\"student.twoInvalidGroupNumer.html\" class=\"o\">4Tż</a>-2/2,<a href=\"o3.html\" class=\"o\">4TIG</a>-1/3 " +
                 "<span class=\"p\">wf</span> <span class=\"s\">@</span><br></td>";
 
-        String expected = "<td class=\"l\"><a href=\"o1.html\" class=\"o\">4Tż-2/2</a><a href=\"o3.html\" class=\"o\">4TIG-1/3 </a>" +
+        String expected = "<td class=\"l\"><a href=\"student.twoInvalidGroupNumer.html\" class=\"o\">4Tż-2/2</a><a href=\"o3.html\" class=\"o\">4TIG-1/3 </a>" +
                 "<span class=\"p\">wf</span> <span class=\"s\">@</span><br></td>";
 
         String actual = optivumHtmlRepairer.fixHtml(html);
 
         assertEquals(expected, actual);
     }
+
 }

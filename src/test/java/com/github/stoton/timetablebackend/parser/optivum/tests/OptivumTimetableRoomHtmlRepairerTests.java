@@ -22,7 +22,7 @@ public class OptivumTimetableRoomHtmlRepairerTests {
 
     @Before
     public void init() {
-        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableRoomStrategy(TimetableType.ROOM);
+        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableRoomStrategy(TimetableType.ROOM,1L, null);
         optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
 

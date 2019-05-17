@@ -1,51 +1,50 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.domain.timetable.Lesson;
-import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetable.*;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
-import org.jsoup.nodes.Document;
 
-import java.util.List;
+import com.github.stoton.timetablebackend.repository.optivum.OptivumTimetableIndexItemRepository;
+import org.jsoup.nodes.Document;
 
 import static com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategyUtils.*;
 
 public class OptivumTimetableTeacherStrategy implements OptivumTimetableStrategy {
 
     private TimetableType timetableType;
+    private OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository;
+    private Long schoolId;
 
-    public OptivumTimetableTeacherStrategy(TimetableType timetableType) {
+
+    public OptivumTimetableTeacherStrategy(TimetableType timetableType, Long schoolId,
+                                           OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) {
+        this.optivumTimetableIndexItemRepository = optivumTimetableIndexItemRepository;
         this.timetableType = timetableType;
+        this.schoolId = schoolId;
     }
 
     @Override
-    public List<Lesson> parseAllLessonsFromHtml(Document document) {
-        return null;
+    public Timetable parseAllLessonsFromHtml(Document document) throws UnknownTimetableTypeException {
+
+        Timetable timetable = new Timetable();
+
+        String teacher = document.select(".tytulnapis")
+                .first().text();
+
+        int indexToCut = teacher.indexOf(' ');
+
+        teacher = teacher.substring(0, indexToCut);
+
+        teacher = teacher.substring(0, 2) + " " + teacher.substring(2);
+        timetable.setType(timetableType.toString());
+
+        timetable.setName(teacher);
+
+        return getTimetable(document, timetable, teacher, timetableType, schoolId, optivumTimetableIndexItemRepository);
     }
+
 
     @Override
     public String fixHtml(String html) throws UnknownTimetableTypeException {
-        int indexOfElementToMerge;
-
-
-        while (!isHtmlValid(html, timetableType)) {
-            StringBuilder correctHtml = new StringBuilder();
-
-            indexOfElementToMerge = getIndexOfElementToMerge(html);
-
-            if (indexOfElementToMerge == NO_OCCURRENCE) break;
-
-            correctHtml
-                    .append(appendHtmlUntilPartToMerge(html, indexOfElementToMerge - 4))
-                    .append(appendPartOfClassToMerge(html, indexOfElementToMerge, indexOfElementToMerge + 5))
-                    .append(appendEndOfSpan(html, indexOfElementToMerge - 4, indexOfElementToMerge))
-                    .append(appendEndOfHtml(html, indexOfElementToMerge + 5));
-
-            html = correctHtml.toString();
-        }
-
-        html = html.replaceAll(",", "");
-        return html;
+        return OptivumTimetableStrategyUtils.fixHtml(html, timetableType);
     }
-
-
 }

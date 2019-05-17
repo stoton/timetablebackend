@@ -1,49 +1,39 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.domain.timetable.Lesson;
-import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetable.*;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
+import com.github.stoton.timetablebackend.repository.optivum.OptivumTimetableIndexItemRepository;
 import org.jsoup.nodes.Document;
-
-import java.util.List;
 
 import static com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategyUtils.*;
 
 public class OptivumTimetableRoomStrategy implements OptivumTimetableStrategy {
 
-    private static final String A_TAG_END = "</a>";
-
     private TimetableType timetableType;
+    private OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository;
+    private Long schoolId;
 
-    public OptivumTimetableRoomStrategy(TimetableType timetableType) {
+    public OptivumTimetableRoomStrategy(TimetableType timetableType,
+                                        Long schoolId, OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) {
         this.timetableType = timetableType;
+        this.schoolId = schoolId;
+        this.optivumTimetableIndexItemRepository = optivumTimetableIndexItemRepository;
     }
 
     @Override
-    public List<Lesson> parseAllLessonsFromHtml(Document document) {
-        return null;
+    public Timetable parseAllLessonsFromHtml(Document document) throws UnknownTimetableTypeException {
+        Timetable timetable = new Timetable();
+
+        timetable.setType(timetableType.toString());
+
+        String room = document.select(".tytulnapis")
+                .first().text();
+
+        return getTimetable(document, timetable, room, timetableType, schoolId, optivumTimetableIndexItemRepository);
     }
 
     @Override
     public String fixHtml(String html) throws UnknownTimetableTypeException {
-
-        int indexOfElementToMerge;
-
-        while (!isHtmlValid(html, timetableType)) {
-            StringBuilder correctHtml = new StringBuilder();
-            indexOfElementToMerge = getIndexOfElementToMerge(html);
-
-            if (indexOfElementToMerge == NO_OCCURRENCE) break;
-
-            correctHtml
-                    .append(appendHtmlUntilPartToMerge(html, indexOfElementToMerge - 7))
-                    .append(appendEndOfSpan(html, indexOfElementToMerge - 7, indexOfElementToMerge-4))
-                    .append(appendPartOfClassToMerge(html, indexOfElementToMerge, indexOfElementToMerge + 5))
-                    .append(A_TAG_END)
-                    .append(appendEndOfHtml(html, indexOfElementToMerge + 5));
-
-            html = correctHtml.toString();
-        }
-        return html;
+        return OptivumTimetableStrategyUtils.fixHtml(html, timetableType);
     }
 }

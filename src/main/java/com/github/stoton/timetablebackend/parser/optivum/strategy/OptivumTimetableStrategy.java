@@ -1,14 +1,13 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.domain.timetable.Lesson;
+import com.github.stoton.timetablebackend.domain.timetable.Timetable;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import org.jsoup.nodes.Document;
 
-import java.util.List;
 
 public interface OptivumTimetableStrategy {
 
-    List<Lesson> parseAllLessonsFromHtml(Document document);
+    Timetable parseAllLessonsFromHtml(Document document) throws UnknownTimetableTypeException;
 
     String fixHtml(String html) throws UnknownTimetableTypeException;
 }

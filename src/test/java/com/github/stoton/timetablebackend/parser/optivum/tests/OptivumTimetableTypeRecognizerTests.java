@@ -24,7 +24,7 @@ public class OptivumTimetableTypeRecognizerTests {
 
     @Test
     public void recognizeStudentTimetableWhenUrlIsCorrect() throws UnknownTimetableTypeException {
-        String url = "http://szkola.zsat.linuxpl.eu/planlekcji/plany/o1.html";
+        String url = "http://szkola.zsat.linuxpl.eu/planlekcji/plany/o7.html";
 
         TimetableType expected = TimetableType.STUDENT;
 

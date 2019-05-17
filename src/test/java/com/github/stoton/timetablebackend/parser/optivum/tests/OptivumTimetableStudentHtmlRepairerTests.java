@@ -27,7 +27,7 @@ public class OptivumTimetableStudentHtmlRepairerTests {
 
     @Before
     public void init() {
-        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableStudentStrategy(TimetableType.STUDENT);
+        OptivumTimetableStrategy optivumTimetableStrategy = new OptivumTimetableStudentStrategy(TimetableType.STUDENT, 1L, null);
         optivumHtmlRepairer = new OptivumHtmlRepairer(optivumTimetableStrategy);
     }
 

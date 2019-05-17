@@ -31,14 +31,14 @@ public class OptivumTimetableIndexItemsParserTests {
 
     @Test
     public void parseStudentTimetableIndexItemWhenHtmlIsCorrect() throws UnknownTimetableTypeException {
-        Document html = Jsoup.parse("<li><a href=\"plany/o1.html\" target=\"plan\">3Zm</a></li>");
+        Document html = Jsoup.parse("<li><a href=\"plany/o7.html\" target=\"plan\">3ZM</a></li>");
 
         OptivumTimetableIndexItem optivumTimetableIndexItem =
                 new OptivumTimetableIndexItem();
 
         optivumTimetableIndexItem.setShortName("");
-        optivumTimetableIndexItem.setFullName("3Zm");
-        optivumTimetableIndexItem.setLink("http://szkola.zsat.linuxpl.eu/planlekcji/plany/o1.html");
+        optivumTimetableIndexItem.setFullName("3ZM");
+        optivumTimetableIndexItem.setLink("http://szkola.zsat.linuxpl.eu/planlekcji/plany/o7.html");
         optivumTimetableIndexItem.setTimetableType(TimetableType.STUDENT);
 
         List<OptivumTimetableIndexItem> expected =
@@ -59,7 +59,7 @@ public class OptivumTimetableIndexItemsParserTests {
                 new OptivumTimetableIndexItem();
 
         optivumTimetableIndexItem.setShortName("MA");
-        optivumTimetableIndexItem.setFullName("A.Mazur");
+        optivumTimetableIndexItem.setFullName("A. Mazur");
         optivumTimetableIndexItem.setLink("http://szkola.zsat.linuxpl.eu/planlekcji/plany/n1.html");
         optivumTimetableIndexItem.setTimetableType(TimetableType.TEACHER);
 
@@ -84,6 +84,28 @@ public class OptivumTimetableIndexItemsParserTests {
         optivumTimetableIndexItem.setFullName("112(1)j.ang");
         optivumTimetableIndexItem.setLink("http://szkola.zsat.linuxpl.eu/planlekcji/plany/s31.html");
         optivumTimetableIndexItem.setTimetableType(TimetableType.ROOM);
+
+        List<OptivumTimetableIndexItem> expected =
+                new ArrayList<>();
+        expected.add(optivumTimetableIndexItem);
+
+        List<OptivumTimetableIndexItem> actual =
+                optivumTimetableIndexItemsParser.parseIndexItems(html);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void parseTeacherTimetableIndexItemWhenHtmlHasBrackets() throws UnknownTimetableTypeException {
+        Document html = Jsoup.parse("<li><a href=\"plany/n35.html\" target=\"plan\">Ł.Mędrygał (ŁM)</a></li>");
+
+        OptivumTimetableIndexItem optivumTimetableIndexItem =
+                new OptivumTimetableIndexItem();
+
+        optivumTimetableIndexItem.setShortName("ŁM");
+        optivumTimetableIndexItem.setFullName("Ł. Mędrygał");
+        optivumTimetableIndexItem.setLink("http://szkola.zsat.linuxpl.eu/planlekcji/plany/n35.html");
+        optivumTimetableIndexItem.setTimetableType(TimetableType.TEACHER);
 
         List<OptivumTimetableIndexItem> expected =
                 new ArrayList<>();

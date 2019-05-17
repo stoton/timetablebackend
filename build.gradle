@@ -39,13 +39,20 @@ dependencies {
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.11'
 
 	compileOnly('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('io.projectreactor:reactor-test')
-
 
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
 	compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
 
-	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+	compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+
+
+	compile("org.springframework.boot:spring-boot-starter-tomcat")
+	
+	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.21.0'
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('io.projectreactor:reactor-test')
+	compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0'
+
 
 }

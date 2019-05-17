@@ -13,7 +13,7 @@ public enum TimetableType {
 
     @Override
     public String toString() {
-        return text;
+        return text.toLowerCase();
     }
 
 }
