@@ -21,9 +21,7 @@ public class OptivumTimetableIndexItemsParser implements TimetableIndexItemsPars
         optivumTimetableTypeRecognizer = new OptivumTimetableTypeRecognizer();
     }
 
-    private static final String ROOT_URL = "http://szkola.zsat.linuxpl.eu/planlekcji/";
-
-    public List<OptivumTimetableIndexItem> parseIndexItems(Document html) throws UnknownTimetableTypeException {
+    public List<OptivumTimetableIndexItem> parseIndexItems(Document html, String timetableHref) throws UnknownTimetableTypeException {
         List<OptivumTimetableIndexItem> optivumTimetableIndexItems = new ArrayList<>();
 
 
@@ -34,7 +32,7 @@ public class OptivumTimetableIndexItemsParser implements TimetableIndexItemsPars
             String href = timetableIndexItem.attr("href");
 
             if (!href.startsWith("plany") || !href.endsWith("html")) continue;
-            String url = ROOT_URL + timetableIndexItem.attr("href");
+            String url = timetableHref + timetableIndexItem.attr("href");
 
             TimetableType timetableType = optivumTimetableTypeRecognizer.recognizeTimetableTypeByUrl(url);
 
@@ -53,7 +51,7 @@ public class OptivumTimetableIndexItemsParser implements TimetableIndexItemsPars
     }
 
     private String toStringWithoutShortNameAndWhitespaces(Element html, TimetableType timetableType) {
-        String fullName = html.text().replaceFirst("\\([A-Za-zŁ]+\\)", "")
+        String fullName = html.text().replaceFirst("\\([A-ZŁŚĆa-z]+\\)", "")
                 .replaceAll("\\s", "");
 
         return timetableType.equals(TimetableType.TEACHER) ? fullName.replace(".", ". ") : fullName;
@@ -61,7 +59,7 @@ public class OptivumTimetableIndexItemsParser implements TimetableIndexItemsPars
 
     private String parseShortName(Element element) {
 
-        Pattern pattern = Pattern.compile("\\([A-Za-zŁ]+\\)");
+        Pattern pattern = Pattern.compile("\\([A-Za-zŁŚĆ]+\\)");
         Matcher matcher = pattern.matcher(element.toString());
 
         String shortName = "";

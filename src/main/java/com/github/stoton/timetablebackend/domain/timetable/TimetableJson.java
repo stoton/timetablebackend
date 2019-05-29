@@ -18,6 +18,7 @@ public class TimetableJson {
     private Long id;
 
     private Long schoolId;
+    private Long timetableId;
 
     @Type(type = "text")
     private String json;

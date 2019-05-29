@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 public class OptivumTimetableIndexItemsParserTests {
 
+    private static final String ROOT_URL = "http://szkola.zsat.linuxpl.eu/planlekcji/";
+
     private OptivumTimetableIndexItemsParser optivumTimetableIndexItemsParser;
 
 
@@ -46,7 +48,7 @@ public class OptivumTimetableIndexItemsParserTests {
         expected.add(optivumTimetableIndexItem);
 
         List<OptivumTimetableIndexItem> actual =
-                optivumTimetableIndexItemsParser.parseIndexItems(html);
+                optivumTimetableIndexItemsParser.parseIndexItems(html, ROOT_URL);
 
         assertEquals(expected, actual);
     }
@@ -68,7 +70,7 @@ public class OptivumTimetableIndexItemsParserTests {
         expected.add(optivumTimetableIndexItem);
 
         List<OptivumTimetableIndexItem> actual =
-                optivumTimetableIndexItemsParser.parseIndexItems(html);
+                optivumTimetableIndexItemsParser.parseIndexItems(html, ROOT_URL);
 
         assertEquals(expected, actual);
     }
@@ -90,7 +92,7 @@ public class OptivumTimetableIndexItemsParserTests {
         expected.add(optivumTimetableIndexItem);
 
         List<OptivumTimetableIndexItem> actual =
-                optivumTimetableIndexItemsParser.parseIndexItems(html);
+                optivumTimetableIndexItemsParser.parseIndexItems(html, ROOT_URL);
 
         assertEquals(expected, actual);
     }
@@ -112,7 +114,29 @@ public class OptivumTimetableIndexItemsParserTests {
         expected.add(optivumTimetableIndexItem);
 
         List<OptivumTimetableIndexItem> actual =
-                optivumTimetableIndexItemsParser.parseIndexItems(html);
+                optivumTimetableIndexItemsParser.parseIndexItems(html, ROOT_URL);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void parseTeacherTimetableIndexItemWhenHtmlHasPolishCharacters() throws UnknownTimetableTypeException {
+        Document html = Jsoup.parse("<li><a href=\"plany/n22.html\" target=\"plan\">J.Świder (JŚ)</a></li>");
+
+        OptivumTimetableIndexItem optivumTimetableIndexItem =
+                new OptivumTimetableIndexItem();
+
+        optivumTimetableIndexItem.setShortName("JŚ");
+        optivumTimetableIndexItem.setFullName("J. Świder");
+        optivumTimetableIndexItem.setLink("http://szkola.zsat.linuxpl.eu/planlekcji/plany/n22.html");
+        optivumTimetableIndexItem.setTimetableType(TimetableType.TEACHER);
+
+        List<OptivumTimetableIndexItem> expected =
+                new ArrayList<>();
+        expected.add(optivumTimetableIndexItem);
+
+        List<OptivumTimetableIndexItem> actual =
+                optivumTimetableIndexItemsParser.parseIndexItems(html, ROOT_URL);
 
         assertEquals(expected, actual);
     }

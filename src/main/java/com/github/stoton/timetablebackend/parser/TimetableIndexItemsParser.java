@@ -6,5 +6,5 @@ import org.jsoup.nodes.Document;
 import java.util.List;
 
 public interface TimetableIndexItemsParser<T> {
-    List<T> parseIndexItems(Document html) throws UnknownTimetableTypeException;
+    List<T> parseIndexItems(Document html, String timetableHref) throws UnknownTimetableTypeException;
 }
