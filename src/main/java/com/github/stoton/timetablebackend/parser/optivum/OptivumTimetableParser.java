@@ -41,6 +41,8 @@ public class OptivumTimetableParser implements TimetableParser {
                 throw new UnknownTimetableTypeException("Unknown timetable type");
         }
 
+
+        System.out.println(url);
         Document document = Jsoup.connect(url).get();
 
         return optivumTimetableStrategy.parseAllLessonsFromHtml(document);

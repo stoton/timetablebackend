@@ -1,6 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
-import com.github.stoton.timetablebackend.domain.timetable.Group;
+import com.github.stoton.timetablebackend.domain.timetable.LessonGroup;
 import com.github.stoton.timetablebackend.domain.timetable.Lesson;
 import com.github.stoton.timetablebackend.domain.timetable.Timetable;
 import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
@@ -42,10 +42,10 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
         expected.setName("112(1) j.ang");
         expected.setType("room");
 
-        List<Group> groups = new ArrayList<>();
+        List<LessonGroup> lessonGroups = new ArrayList<>();
 
-        groups.add(new Group("3 TżG-2/3", "S. Nizioł", "pr.pl.żipr.g", "112(1) j.ang"));
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
+        lessonGroups.add(new LessonGroup("3 TżG-2/3", "S. Nizioł", "pr.pl.żipr.g", "112(1) j.ang"));
+        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", lessonGroups));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));

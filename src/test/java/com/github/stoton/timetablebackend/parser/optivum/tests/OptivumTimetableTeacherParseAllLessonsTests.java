@@ -70,10 +70,10 @@ public class OptivumTimetableTeacherParseAllLessonsTests {
         expected.setName("A. Mazur");
         expected.setType("teacher");
 
-        List<Group> groups = new ArrayList<>();
-        groups.add(new Group("1 TAG", "A. Mazur", "biologia", "310"));
+        List<LessonGroup> lessonGroups = new ArrayList<>();
+        lessonGroups.add(new LessonGroup("1 TAG", "A. Mazur", "biologia", "310"));
 
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
+        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", lessonGroups));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
@@ -107,12 +107,12 @@ public class OptivumTimetableTeacherParseAllLessonsTests {
         expected.setName("L. Kędzior");
         expected.setType("teacher");
 
-        List<Group> groups = new ArrayList<>();
-        groups.add(new Group("4 Tż-2/2", "L. Kędzior", "wf", "@"));
-        groups.add(new Group("4 TIG-1/3", "L. Kędzior", "wf", "@"));
+        List<LessonGroup> lessonGroups = new ArrayList<>();
+        lessonGroups.add(new LessonGroup("4 Tż-2/2", "L. Kędzior", "wf", "@"));
+        lessonGroups.add(new LessonGroup("4 TIG-1/3", "L. Kędzior", "wf", "@"));
 
 
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
+        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", lessonGroups));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));

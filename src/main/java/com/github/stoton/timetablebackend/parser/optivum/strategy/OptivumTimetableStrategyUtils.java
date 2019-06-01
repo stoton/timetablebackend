@@ -1,7 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.Application;
-import com.github.stoton.timetablebackend.domain.timetable.Group;
+import com.github.stoton.timetablebackend.domain.timetable.LessonGroup;
 import com.github.stoton.timetablebackend.domain.timetable.Lesson;
 import com.github.stoton.timetablebackend.domain.timetable.Timetable;
 import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
@@ -10,7 +9,6 @@ import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeExceptio
 import com.github.stoton.timetablebackend.repository.optivum.OptivumTimetableIndexItemRepository;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -195,8 +193,8 @@ class OptivumTimetableStrategyUtils {
         }
     }
 
-    static List<Group> parseGroups(String html, String name, TimetableType timetableType,
-                                   Long schoolId, OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) throws UnknownTimetableTypeException {
+    static List<LessonGroup> parseGroups(String html, String name, TimetableType timetableType,
+                                         Long schoolId, OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) throws UnknownTimetableTypeException {
 
         Document currentLesson = Jsoup.parse(html);
 
@@ -241,12 +239,12 @@ class OptivumTimetableStrategyUtils {
         }
     }
 
-    private static List<Group> parseRoomGroups(HtmlElements htmlElements, String room,
-                                               OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
-        List<Group> groups = new ArrayList<>();
+    private static List<LessonGroup> parseRoomGroups(HtmlElements htmlElements, String room,
+                                                     OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
+        List<LessonGroup> lessonGroups = new ArrayList<>();
 
         for (int i = 0; i < htmlElements.p.size(); i++) {
-            Group group = new Group();
+            LessonGroup lessonGroup = new LessonGroup();
 
             String student = htmlElements.o.get(i).text();
 
@@ -255,64 +253,64 @@ class OptivumTimetableStrategyUtils {
             String teacher = optivumTimetableIndexItemRepository
                     .findFirstByShortNameAndSchool_Id(htmlElements.n.get(i).text(), schoolId).getFullName();
 
-            group.setSubject(htmlElements.p.get(i).text());
-            group.setRoom(room);
-            group.setTeacher(teacher);
-            group.setStudent(student);
+            lessonGroup.setSubject(htmlElements.p.get(i).text());
+            lessonGroup.setRoom(room);
+            lessonGroup.setTeacher(teacher);
+            lessonGroup.setStudent(student);
 
-            groups.add(group);
+            lessonGroups.add(lessonGroup);
         }
-        return groups;
+        return lessonGroups;
     }
 
-    private static List<Group> parseTeacherGroups(HtmlElements htmlElements, String teacher) {
-        List<Group> groups = new ArrayList<>();
+    private static List<LessonGroup> parseTeacherGroups(HtmlElements htmlElements, String teacher) {
+        List<LessonGroup> lessonGroups = new ArrayList<>();
 
         if (htmlElements.o.size() > htmlElements.p.size()) {
             for (int i = 0; i < htmlElements.o.size(); i++) {
-                Group group = new Group();
+                LessonGroup lessonGroup = new LessonGroup();
 
                 String student = htmlElements.o.get(i).text();
 
                 student = formatElementWithGroup(student);
 
-                group.setSubject(htmlElements.p.get(0).text());
-                group.setRoom(htmlElements.s.get(0).text());
-                group.setTeacher(teacher);
-                group.setStudent(student);
+                lessonGroup.setSubject(htmlElements.p.get(0).text());
+                lessonGroup.setRoom(htmlElements.s.get(0).text());
+                lessonGroup.setTeacher(teacher);
+                lessonGroup.setStudent(student);
 
-                groups.add(group);
+                lessonGroups.add(lessonGroup);
             }
 
-            return groups;
+            return lessonGroups;
         }
 
         for (int i = 0; i < htmlElements.p.size(); i++) {
-            Group group = new Group();
+            LessonGroup lessonGroup = new LessonGroup();
 
             String student = htmlElements.o.get(i).text();
 
             student = formatElementWithGroup(student);
 
-            group.setSubject(htmlElements.p.get(i).text());
-            group.setRoom(htmlElements.s.get(i).text());
-            group.setTeacher(teacher);
-            group.setStudent(student);
+            lessonGroup.setSubject(htmlElements.p.get(i).text());
+            lessonGroup.setRoom(htmlElements.s.get(i).text());
+            lessonGroup.setTeacher(teacher);
+            lessonGroup.setStudent(student);
 
-            groups.add(group);
+            lessonGroups.add(lessonGroup);
         }
-        return groups;
+        return lessonGroups;
     }
 
-    private static List<Group> parseStudentGroups(HtmlElements htmlElements, String student,
-                                                  OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
+    private static List<LessonGroup> parseStudentGroups(HtmlElements htmlElements, String student,
+                                                        OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
 
-        List<Group> groups = new ArrayList<>();
+        List<LessonGroup> lessonGroups = new ArrayList<>();
 
         String studentTemp = student;
 
         for (int i = 0; i < htmlElements.p.size(); i++) {
-            Group group = new Group();
+            LessonGroup lessonGroup = new LessonGroup();
 
             student = studentTemp;
 
@@ -328,14 +326,14 @@ class OptivumTimetableStrategyUtils {
             OptivumTimetableIndexItem teacherTimetableIndexItem =
                     optivumTimetableIndexItemRepository.findFirstByShortNameAndSchool_Id(htmlElements.n.get(i).text(), schoolId);
             String teacher = teacherTimetableIndexItem != null ? teacherTimetableIndexItem.getFullName() : htmlElements.n.get(i).text();
-            group.setSubject(subject);
-            group.setRoom(htmlElements.s.get(i).text());
-            group.setTeacher(teacher);
-            group.setStudent(student);
+            lessonGroup.setSubject(subject);
+            lessonGroup.setRoom(htmlElements.s.get(i).text());
+            lessonGroup.setTeacher(teacher);
+            lessonGroup.setStudent(student);
 
-            groups.add(group);
+            lessonGroups.add(lessonGroup);
         }
-        return groups;
+        return lessonGroups;
     }
 
     private static String fixTeacherHtml(String html, TimetableType timetableType) throws UnknownTimetableTypeException {
