@@ -12,4 +12,6 @@ public interface OptivumTimetableIndexItemRepository extends TimetableIndexItemR
 
     OptivumTimetableIndexItem findFirstByFullName(String fullName);
 
+    OptivumTimetableIndexItem findByFullNameAndShortNameAndSchool_Id(String fullName, String shortName, Long schoolId);
+
 }

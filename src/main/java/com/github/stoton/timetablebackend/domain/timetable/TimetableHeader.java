@@ -1,6 +1,5 @@
 package com.github.stoton.timetablebackend.domain.timetable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -17,6 +16,7 @@ import java.time.LocalDateTime;
 public class TimetableHeader {
 
     private Long id;
+    private Long schoolId;
     private String name;
     private String type;
     @JsonSerialize(using = LocalDateTimeSerializer.class)

@@ -11,7 +11,7 @@ public final class ParserFactory {
             case OPTIVUM_TIMETABLE:
                 return new OptivumTimetableParser();
             default:
-                return null;
+                return new OptivumTimetableParser();
         }
     }
 }

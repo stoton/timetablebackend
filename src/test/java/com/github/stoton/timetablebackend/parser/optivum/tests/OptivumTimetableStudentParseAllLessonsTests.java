@@ -1,9 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
-import com.github.stoton.timetablebackend.domain.timetable.LessonGroup;
-import com.github.stoton.timetablebackend.domain.timetable.Lesson;
-import com.github.stoton.timetablebackend.domain.timetable.Timetable;
-import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetable.*;
 import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableStrategy;
@@ -40,6 +37,8 @@ public class OptivumTimetableStudentParseAllLessonsTests {
     public void parseStudentTimetableWhenTimetableIsEmptyTest() throws IOException, UnknownTimetableTypeException {
 
         Timetable expected = new Timetable();
+        expected.setSchedule(new Schedule());
+
         expected.setName("4 Tż");
         expected.setType("student");
 
@@ -73,15 +72,16 @@ public class OptivumTimetableStudentParseAllLessonsTests {
     public void parseStudentTimetableHtmlWhenTwoGroupsAreInvalid() throws IOException, UnknownTimetableTypeException {
 
         Timetable expected = new Timetable();
+        expected.setSchedule(new Schedule());
         expected.setName("4 Tż");
         expected.setType("student");
 
-        List<LessonGroup> lessonGroups = new ArrayList<>();
-        lessonGroups.add(new LessonGroup("4 Tż-1/2", "#W8", "wf", "@"));
-        lessonGroups.add(new LessonGroup("4 Tż-2/2", "#W9", "wf", "@"));
+        List<Group> groups = new ArrayList<>();
+        groups.add(new Group("4 Tż-1/2", "#W8", "wf", "@"));
+        groups.add(new Group("4 Tż-2/2", "#W9", "wf", "@"));
         expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", lessonGroups));
+        expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", groups));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getFri().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
 

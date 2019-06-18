@@ -6,11 +6,15 @@ import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.Opti
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.ParserFactory;
 import com.github.stoton.timetablebackend.parser.TimetableParser;
+import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableIndexItemsParser;
 import com.github.stoton.timetablebackend.parser.optivum.OptivumTimetableTypeRecognizer;
 import com.github.stoton.timetablebackend.properties.TimetableProducerType;
 import com.github.stoton.timetablebackend.repository.*;
 import com.github.stoton.timetablebackend.repository.optivum.OptivumTimetableIndexItemRepository;
 import com.github.stoton.timetablebackend.service.TimetableProducerRegonizer;
+import com.github.stoton.timetablebackend.service.UnknownTimetableProducerType;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -35,6 +39,8 @@ public class TimetableController {
     private final LessonRepository lessonRepository;
     private final GroupRepository groupRepository;
     private final TimetableProducerRegonizer timetableProducerRegonizer;
+    private OptivumTimetableIndexItemsParser optivumTimetableIndexItemsParser;
+
 
     @Autowired
     public TimetableController(OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, SchoolRepository schoolRepository, TimetableRepository timetableRepository, ScheduleRepository scheduleRepository, LessonRepository lessonRepository, GroupRepository groupRepository) {
@@ -45,32 +51,23 @@ public class TimetableController {
         this.lessonRepository = lessonRepository;
         this.groupRepository = groupRepository;
         timetableProducerRegonizer = new TimetableProducerRegonizer();
+        optivumTimetableIndexItemsParser = new OptivumTimetableIndexItemsParser();
     }
 
     @GetMapping(value = "/schools/{schoolId}/timetables", produces = APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<TimetableHeader>>> getAllTimetables(@PathVariable Long schoolId) throws IOException {
-        List<Timetable> allBySchoolId = timetableRepository.findAllBySchoolId(schoolId);
+    public Mono<ResponseEntity<List<Timetable>>> getAllTimetables(@PathVariable Long schoolId) {
+        List<Timetable> timetableHeadersBySchoolId = timetableRepository.findTimetableHeadersBySchoolId(schoolId);
 
-        if (allBySchoolId.isEmpty()) {
+        if (timetableHeadersBySchoolId.isEmpty()) {
             return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         }
         updateSchoolsPopularity(schoolId);
 
-        List<TimetableHeader> timetableHeaderList = new ArrayList<>();
-
-        for (Timetable timetable : allBySchoolId) {
-            TimetableHeader timetableHeader = new TimetableHeader(
-                    timetable.getId(),
-                    timetable.getName(),
-                    timetable.getType(),
-                    timetable.getTimestamp());
-            timetableHeaderList.add(timetableHeader);
-        }
-        return Mono.just(ResponseEntity.status(HttpStatus.OK).body(timetableHeaderList));
+        return Mono.just(ResponseEntity.status(HttpStatus.OK).body(timetableHeadersBySchoolId));
     }
 
     @GetMapping(value = "/schools/{schoolId}/timetables/{timetableId}", produces = APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<Timetable>> getExampleTimetable(@PathVariable Long schoolId, @PathVariable Long timetableId) throws IOException {
+    public Mono<ResponseEntity<Timetable>> getExampleTimetable(@PathVariable Long schoolId, @PathVariable Long timetableId) {
         Timetable timetable = timetableRepository.findBySchoolIdAndId(schoolId, timetableId);
 
         if (timetable == null) {
@@ -83,64 +80,147 @@ public class TimetableController {
     }
 
     @PostMapping(value = "/schools/{schoolId}/scheduleParser")
-    public void parseAllTimetablesBySchoolId(@PathVariable("schoolId") Long schoolId) throws IOException, UnknownTimetableTypeException {
+    public Mono<ResponseEntity<Void>> parseAllTimetablesBySchoolId(@PathVariable("schoolId") Long schoolId) throws IOException, UnknownTimetableTypeException {
 
+        Optional<School> optionalSchool = schoolRepository.findById(schoolId);
+
+        if (!optionalSchool.isPresent()) {
+            return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        }
+
+        School school = optionalSchool.get();
+
+        TimetableProducerType timetableProducerType = null;
+
+        try {
+            timetableProducerType = TimetableProducerRegonizer
+                    .recognizeTimetable(school.getTimetableHref());
+        } catch (UnknownTimetableProducerType unknownTimetableProducerType) {
+            unknownTimetableProducerType.printStackTrace();
+        }
+
+        if (TimetableProducerType.OPTIVUM_TIMETABLE.equals(timetableProducerType)) {
+
+            Pattern pattern = Pattern.compile("(.*?)index.html");
+            Matcher matcher = pattern.matcher(school.getTimetableHref());
+
+
+            String url = "";
+
+            if (matcher.find()) {
+                System.out.println(matcher.group(1));
+                url = matcher.group(1);
+            }
+
+            Document document = Jsoup.connect(url + "/lista.html").get();
+
+            List<OptivumTimetableIndexItem> optivumTimetableIndexItems =
+                    optivumTimetableIndexItemsParser.parseIndexItems(document, school.getTimetableHref());
+
+            optivumTimetableIndexItems
+                    .forEach(optivumTimetableIndexItem -> saveOptivumTimetableIndexItem(optivumTimetableIndexItem, school));
+
+            List<OptivumTimetableIndexItem> optivumTimetableIndexItemList = optivumTimetableIndexItemRepository.findAllBySchoolId(schoolId);
+            optivumTimetableIndexItemList
+                    .parallelStream()
+                    .forEach(optivumTimetableIndexItem -> parseAndSaveTimetable(optivumTimetableIndexItem, schoolId));
+
+            return Mono.just(ResponseEntity.status(HttpStatus.OK).build());
+        }
+
+        return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+    }
+
+
+    private void saveSchedule(Schedule schedule) {
+        scheduleRepository.save(schedule);
+    }
+
+    private void parseAndSaveTimetable(OptivumTimetableIndexItem timetableIndexItem, Long schoolId) {
         ParserFactory parserFactory = new ParserFactory();
         TimetableParser timetableParser = parserFactory.getTimetableParser(TimetableProducerType.OPTIVUM_TIMETABLE);
 
-        List<OptivumTimetableIndexItem> optivumTimetableIndexItems = optivumTimetableIndexItemRepository.findAllBySchoolId(schoolId);
+        Timetable timetable = null;
 
-        for (OptivumTimetableIndexItem timetableIndexItem : optivumTimetableIndexItems) {
+        try {
+            timetable = timetableParser.parseTimetable(timetableIndexItem.getLink(), new OptivumTimetableTypeRecognizer(), schoolId);
+        } catch (UnknownTimetableTypeException | IOException e) {
+            e.printStackTrace();
+        }
 
-            Timetable timetable =
-                    timetableParser.parseTimetable(timetableIndexItem.getLink(), new OptivumTimetableTypeRecognizer(), schoolId);
+        Timetable currentTimetable = timetableRepository.
+                findBySchoolIdAndNameAndType(schoolId, timetable.getName(), timetable.getType());
 
-            timetable.setId(timetableIndexItem.getId());
+        if (currentTimetable != null) {
 
-            Optional<School> schoolOptional = schoolRepository.findById(schoolId);
+            if (!currentTimetable.getSchedule().equals(timetable.getSchedule())) {
+                currentTimetable.setSchedule(timetable.getSchedule());
 
-            if (schoolOptional.isPresent()) {
-                School school = schoolOptional.get();
-                school.setTimestamp(timetable.getTimestamp());
+                Optional<School> schoolOptional = schoolRepository.findById(schoolId);
 
-                schoolRepository.save(school);
+                currentTimetable.setTimestamp(timetable.getTimestamp());
+                saveSchedule(currentTimetable.getSchedule());
+                saveLessons(currentTimetable.getSchedule());
+                saveGroup(currentTimetable.getSchedule());
+
+                timetableRepository.save(currentTimetable);
+
+                if (schoolOptional.isPresent()) {
+                    School school = schoolOptional.get();
+                    school.setTimestamp(timetable.getTimestamp());
+                    schoolRepository.save(school);
+                }
+
             }
 
-            saveGroup(timetable.getSchedule());
-            saveLessons(timetable.getSchedule());
-            saveSchedule(timetable.getSchedule());
 
+        } else {
+            saveSchedule(timetable.getSchedule());
+            saveLessons(timetable.getSchedule());
+            saveGroup(timetable.getSchedule());
+
+            timetable.setSchoolId(schoolId);
             timetableRepository.save(timetable);
         }
     }
 
-    private void updateSchoolsPopularity(@PathVariable Long schoolId) {
-        List<School> schools = schoolRepository.findAll();
+    private void saveOptivumTimetableIndexItem(OptivumTimetableIndexItem optivumTimetableIndexItem, School school) {
+        OptivumTimetableIndexItem byFullNameAndShortNameAndSchool_id = optivumTimetableIndexItemRepository
+                .findByFullNameAndShortNameAndSchool_Id(
+                        optivumTimetableIndexItem.getFullName(),
+                        optivumTimetableIndexItem.getShortName(),
+                        school.getId());
 
-        for (School school : schools) {
-            if (school.getId().equals(schoolId)) {
-                school.setSchoolCallsNumber(school.getSchoolCallsNumber().add(BigInteger.ONE));
-            }
+        if (byFullNameAndShortNameAndSchool_id == null) {
+            byFullNameAndShortNameAndSchool_id = new OptivumTimetableIndexItem();
         }
-        schools.sort((o1, o2) -> o2.getSchoolCallsNumber().compareTo(o1.getSchoolCallsNumber()));
 
-        Long popularity = 1L;
+        byFullNameAndShortNameAndSchool_id.setSchool(school);
+        byFullNameAndShortNameAndSchool_id.setFullName(optivumTimetableIndexItem.getFullName());
+        byFullNameAndShortNameAndSchool_id.setShortName(optivumTimetableIndexItem.getShortName());
+        byFullNameAndShortNameAndSchool_id.setLink(optivumTimetableIndexItem.getLink());
+        byFullNameAndShortNameAndSchool_id.setTimetableType(optivumTimetableIndexItem.getTimetableType());
 
-        for (School school : schools) {
-            school.setPopularity(popularity);
-            schoolRepository.save(school);
-            popularity++;
+        optivumTimetableIndexItemRepository.save(byFullNameAndShortNameAndSchool_id);
+    }
+
+    private void updateSchoolsPopularity(@PathVariable Long schoolId) {
+        Optional<School> schoolOptional = schoolRepository.findById(schoolId);
+
+        if (schoolOptional.isPresent()) {
+            School school = schoolOptional.get();
+            school.setPopularity(school.getPopularity() + 1L);
         }
     }
 
     private void saveGroup(Schedule schedule) {
-        schedule.getMon().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
-        schedule.getTue().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
-        schedule.getWed().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
-        schedule.getThu().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
-        schedule.getFri().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
-        schedule.getSat().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
-        schedule.getSun().forEach(lesson -> groupRepository.saveAll(lesson.getLessonGroups()));
+        schedule.getMon().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
+        schedule.getTue().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
+        schedule.getWed().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
+        schedule.getThu().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
+        schedule.getFri().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
+        schedule.getSat().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
+        schedule.getSun().forEach(lesson -> groupRepository.saveAll(lesson.getGroups()));
     }
 
     private void saveLessons(Schedule schedule) {
@@ -152,10 +232,4 @@ public class TimetableController {
         lessonRepository.saveAll(schedule.getSat());
         lessonRepository.saveAll(schedule.getSun());
     }
-
-    private void saveSchedule(Schedule schedule) {
-        scheduleRepository.save(schedule);
-    }
-
-
 }

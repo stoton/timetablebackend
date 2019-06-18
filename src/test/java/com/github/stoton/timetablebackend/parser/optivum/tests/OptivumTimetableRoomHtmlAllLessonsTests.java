@@ -1,9 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.tests;
 
-import com.github.stoton.timetablebackend.domain.timetable.LessonGroup;
-import com.github.stoton.timetablebackend.domain.timetable.Lesson;
-import com.github.stoton.timetablebackend.domain.timetable.Timetable;
-import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetable.*;
 import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.parser.optivum.strategy.OptivumTimetableRoomStrategy;
@@ -38,14 +35,15 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
     public void parseTimetableRoomHtmlWhenGroupNumberIsInvalidTest() throws IOException, UnknownTimetableTypeException {
 
         Timetable expected = new Timetable();
+        expected.setSchedule(new Schedule());
 
         expected.setName("112(1) j.ang");
         expected.setType("room");
 
-        List<LessonGroup> lessonGroups = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
 
-        lessonGroups.add(new LessonGroup("3 TżG-2/3", "S. Nizioł", "pr.pl.żipr.g", "112(1) j.ang"));
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", lessonGroups));
+        groups.add(new Group("3 TżG-2/3", "S. Nizioł", "pr.pl.żipr.g", "112(1) j.ang"));
+        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
@@ -81,6 +79,8 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
 
         Timetable expected = new Timetable();
 
+        expected.setSchedule(new Schedule());
+
         expected.setName("inf4 zapl.kuch");
         expected.setType("room");
 
@@ -114,6 +114,8 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
     public void parseTimetableRoomHtmlWhenTimetableHasNoHtmlDataTest() throws IOException, UnknownTimetableTypeException {
 
         Timetable expected = new Timetable();
+
+        expected.setSchedule(new Schedule());
 
         expected.setName("209 j.ang");
         expected.setType("room");

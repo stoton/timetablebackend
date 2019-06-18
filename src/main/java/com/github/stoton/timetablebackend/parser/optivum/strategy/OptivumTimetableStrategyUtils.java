@@ -1,9 +1,6 @@
 package com.github.stoton.timetablebackend.parser.optivum.strategy;
 
-import com.github.stoton.timetablebackend.domain.timetable.LessonGroup;
-import com.github.stoton.timetablebackend.domain.timetable.Lesson;
-import com.github.stoton.timetablebackend.domain.timetable.Timetable;
-import com.github.stoton.timetablebackend.domain.timetable.TimetableType;
+import com.github.stoton.timetablebackend.domain.timetable.*;
 import com.github.stoton.timetablebackend.domain.timetableindexitem.optivum.OptivumTimetableIndexItem;
 import com.github.stoton.timetablebackend.exception.UnknownTimetableTypeException;
 import com.github.stoton.timetablebackend.repository.optivum.OptivumTimetableIndexItemRepository;
@@ -20,7 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class OptivumTimetableStrategyUtils {
+class  OptivumTimetableStrategyUtils {
 
     static final String OUTER_PART_OF_CLASS = ">-[0-9]/[0-9]";
     static final String SUBJECT_CLASS = "class=\"p\"";
@@ -70,6 +67,8 @@ class OptivumTimetableStrategyUtils {
                                   Long schoolId, OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) throws UnknownTimetableTypeException {
         Element table = document.selectFirst(".tabela");
         Elements trs = table.select("tr:not(:first-child)");
+
+        timetable.setSchedule(new Schedule());
 
         buildTimetable(timetable, trs, teacher, timetableType, schoolId, optivumTimetableIndexItemRepository);
 
@@ -134,6 +133,7 @@ class OptivumTimetableStrategyUtils {
             int num = Integer.valueOf(tds.get(NUMBER_OF_LESSON).text()) - 1;
             String start = tds.get(START).text().split("-")[0].trim();
             String end = tds.get(END).text().split("-")[1].trim();
+            ;
 
             if (tdsCount >= MONDAY) {
                 timetable
@@ -193,8 +193,8 @@ class OptivumTimetableStrategyUtils {
         }
     }
 
-    static List<LessonGroup> parseGroups(String html, String name, TimetableType timetableType,
-                                         Long schoolId, OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) throws UnknownTimetableTypeException {
+    static List<Group> parseGroups(String html, String name, TimetableType timetableType,
+                                   Long schoolId, OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository) throws UnknownTimetableTypeException {
 
         Document currentLesson = Jsoup.parse(html);
 
@@ -239,12 +239,12 @@ class OptivumTimetableStrategyUtils {
         }
     }
 
-    private static List<LessonGroup> parseRoomGroups(HtmlElements htmlElements, String room,
-                                                     OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
-        List<LessonGroup> lessonGroups = new ArrayList<>();
+    private static List<Group> parseRoomGroups(HtmlElements htmlElements, String room,
+                                               OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
+        List<Group> groups = new ArrayList<>();
 
         for (int i = 0; i < htmlElements.p.size(); i++) {
-            LessonGroup lessonGroup = new LessonGroup();
+            Group group = new Group();
 
             String student = htmlElements.o.get(i).text();
 
@@ -253,64 +253,64 @@ class OptivumTimetableStrategyUtils {
             String teacher = optivumTimetableIndexItemRepository
                     .findFirstByShortNameAndSchool_Id(htmlElements.n.get(i).text(), schoolId).getFullName();
 
-            lessonGroup.setSubject(htmlElements.p.get(i).text());
-            lessonGroup.setRoom(room);
-            lessonGroup.setTeacher(teacher);
-            lessonGroup.setStudent(student);
+            group.setSubject(htmlElements.p.get(i).text());
+            group.setRoom(room);
+            group.setTeacher(teacher);
+            group.setStudent(student);
 
-            lessonGroups.add(lessonGroup);
+            groups.add(group);
         }
-        return lessonGroups;
+        return groups;
     }
 
-    private static List<LessonGroup> parseTeacherGroups(HtmlElements htmlElements, String teacher) {
-        List<LessonGroup> lessonGroups = new ArrayList<>();
+    private static List<Group> parseTeacherGroups(HtmlElements htmlElements, String teacher) {
+        List<Group> groups = new ArrayList<>();
 
         if (htmlElements.o.size() > htmlElements.p.size()) {
             for (int i = 0; i < htmlElements.o.size(); i++) {
-                LessonGroup lessonGroup = new LessonGroup();
+                Group group = new Group();
 
                 String student = htmlElements.o.get(i).text();
 
                 student = formatElementWithGroup(student);
 
-                lessonGroup.setSubject(htmlElements.p.get(0).text());
-                lessonGroup.setRoom(htmlElements.s.get(0).text());
-                lessonGroup.setTeacher(teacher);
-                lessonGroup.setStudent(student);
+                group.setSubject(htmlElements.p.get(0).text());
+                group.setRoom(htmlElements.s.get(0).text());
+                group.setTeacher(teacher);
+                group.setStudent(student);
 
-                lessonGroups.add(lessonGroup);
+                groups.add(group);
             }
 
-            return lessonGroups;
+            return groups;
         }
 
         for (int i = 0; i < htmlElements.p.size(); i++) {
-            LessonGroup lessonGroup = new LessonGroup();
+            Group group = new Group();
 
             String student = htmlElements.o.get(i).text();
 
             student = formatElementWithGroup(student);
 
-            lessonGroup.setSubject(htmlElements.p.get(i).text());
-            lessonGroup.setRoom(htmlElements.s.get(i).text());
-            lessonGroup.setTeacher(teacher);
-            lessonGroup.setStudent(student);
+            group.setSubject(htmlElements.p.get(i).text());
+            group.setRoom(htmlElements.s.get(i).text());
+            group.setTeacher(teacher);
+            group.setStudent(student);
 
-            lessonGroups.add(lessonGroup);
+            groups.add(group);
         }
-        return lessonGroups;
+        return groups;
     }
 
-    private static List<LessonGroup> parseStudentGroups(HtmlElements htmlElements, String student,
-                                                        OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
+    private static List<Group> parseStudentGroups(HtmlElements htmlElements, String student,
+                                                  OptivumTimetableIndexItemRepository optivumTimetableIndexItemRepository, Long schoolId) {
 
-        List<LessonGroup> lessonGroups = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
 
         String studentTemp = student;
 
         for (int i = 0; i < htmlElements.p.size(); i++) {
-            LessonGroup lessonGroup = new LessonGroup();
+            Group group = new Group();
 
             student = studentTemp;
 
@@ -326,14 +326,14 @@ class OptivumTimetableStrategyUtils {
             OptivumTimetableIndexItem teacherTimetableIndexItem =
                     optivumTimetableIndexItemRepository.findFirstByShortNameAndSchool_Id(htmlElements.n.get(i).text(), schoolId);
             String teacher = teacherTimetableIndexItem != null ? teacherTimetableIndexItem.getFullName() : htmlElements.n.get(i).text();
-            lessonGroup.setSubject(subject);
-            lessonGroup.setRoom(htmlElements.s.get(i).text());
-            lessonGroup.setTeacher(teacher);
-            lessonGroup.setStudent(student);
+            group.setSubject(subject);
+            group.setRoom(htmlElements.s.get(i).text());
+            group.setTeacher(teacher);
+            group.setStudent(student);
 
-            lessonGroups.add(lessonGroup);
+            groups.add(group);
         }
-        return lessonGroups;
+        return groups;
     }
 
     private static String fixTeacherHtml(String html, TimetableType timetableType) throws UnknownTimetableTypeException {

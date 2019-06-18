@@ -33,6 +33,7 @@ public class OptivumTimetableTeacherParseAllLessonsTests {
     public void parseTeacherTimetableWhenTimetableIsEmptyTest() throws IOException, UnknownTimetableTypeException {
 
         Timetable expected = new Timetable();
+        expected.setSchedule(new Schedule());
 
         expected.setName("A. Mazur");
         expected.setType("teacher");
@@ -66,14 +67,15 @@ public class OptivumTimetableTeacherParseAllLessonsTests {
     @Test
     public void parseTeacherTimetableWhenTeacherHasOneClassTest() throws IOException, UnknownTimetableTypeException {
         Timetable expected = new Timetable();
+        expected.setSchedule(new Schedule());
 
         expected.setName("A. Mazur");
         expected.setType("teacher");
 
-        List<LessonGroup> lessonGroups = new ArrayList<>();
-        lessonGroups.add(new LessonGroup("1 TAG", "A. Mazur", "biologia", "310"));
+        List<Group> groups = new ArrayList<>();
+        groups.add(new Group("1 TAG", "A. Mazur", "biologia", "310"));
 
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", lessonGroups));
+        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
@@ -103,16 +105,17 @@ public class OptivumTimetableTeacherParseAllLessonsTests {
     @Test
     public void parseTeacherTimetableWhenTeacherHasTwoClassTest() throws IOException, UnknownTimetableTypeException {
         Timetable expected = new Timetable();
+        expected.setSchedule(new Schedule());
 
         expected.setName("L. Kędzior");
         expected.setType("teacher");
 
-        List<LessonGroup> lessonGroups = new ArrayList<>();
-        lessonGroups.add(new LessonGroup("4 Tż-2/2", "L. Kędzior", "wf", "@"));
-        lessonGroups.add(new LessonGroup("4 TIG-1/3", "L. Kędzior", "wf", "@"));
+        List<Group> groups = new ArrayList<>();
+        groups.add(new Group("4 Tż-2/2", "L. Kędzior", "wf", "@"));
+        groups.add(new Group("4 TIG-1/3", "L. Kędzior", "wf", "@"));
 
 
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", lessonGroups));
+        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
         expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
         expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));

@@ -24,6 +24,12 @@ public class OptivumTimetableIndexItemsParser implements TimetableIndexItemsPars
     public List<OptivumTimetableIndexItem> parseIndexItems(Document html, String timetableHref) throws UnknownTimetableTypeException {
         List<OptivumTimetableIndexItem> optivumTimetableIndexItems = new ArrayList<>();
 
+        Pattern pattern = Pattern.compile("(.*?)index.html");
+        Matcher matcher = pattern.matcher(timetableHref);
+
+        if (matcher.find()) {
+            timetableHref = matcher.group(1);
+        }
 
         Elements timetableIndexItems = html.select("a");
 

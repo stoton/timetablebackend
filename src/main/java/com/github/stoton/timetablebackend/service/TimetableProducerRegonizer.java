@@ -5,13 +5,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
-
 public class TimetableProducerRegonizer {
 
-    public static TimetableProducerType recognizeTimetable(String url) throws UnknownTimetableProducerType, IOException {
+    public static TimetableProducerType recognizeTimetable(String url) throws UnknownTimetableProducerType {
 
-        Document html = Jsoup.connect(url).get();
+        Document html;
+
+        try {
+            html = Jsoup.connect(url).get();
+        } catch (Exception e) {
+            throw new UnknownTimetableProducerType("Url is incorrect.");
+
+        }
 
         if (isOptivumTimetable(html)) return TimetableProducerType.OPTIVUM_TIMETABLE;
 
