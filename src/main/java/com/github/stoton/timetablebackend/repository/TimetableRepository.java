@@ -15,7 +15,7 @@ public interface TimetableRepository extends JpaRepository<Timetable, Long> {
     @Query("select new com.github.stoton.timetablebackend.domain.timetable.Timetable(t.id, t.schoolId, t.name, t.type, t.timestamp) from Timetable t where t.schoolId = ?1")
     List<Timetable> findTimetableHeadersBySchoolId(Long schoolId);
 
-    Timetable findBySchoolIdAndId(Long schoolId, Long id);
+    Timetable findByIdAndSchoolId(Long id, Long schoolId);
 
     Timetable findBySchoolIdAndNameAndType(Long schoolId, String name, String type);
 }
