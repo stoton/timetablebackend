@@ -49,10 +49,6 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
 
         groups.add(new Group("3 TżG-2/3", "S. Nizioł", "pr.pl.żipr.g", "112(1) j.ang"));
         expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", groups));
-        expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getFri().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
 
         OptivumTimetableStrategy optivumTimetableStrategy =
                 new OptivumTimetableRoomStrategy(TimetableType.ROOM, 58L, optivumTimetableIndexItemRepository);
@@ -89,12 +85,6 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
         expected.setName("inf4 zapl.kuch");
         expected.setType("room");
 
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getFri().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-
         OptivumTimetableStrategy optivumTimetableStrategy =
                 new OptivumTimetableRoomStrategy(TimetableType.ROOM, 58L, optivumTimetableIndexItemRepository);
 
@@ -124,12 +114,6 @@ public class OptivumTimetableRoomHtmlAllLessonsTests {
 
         expected.setName("209 j.ang");
         expected.setType("room");
-
-        expected.getSchedule().getMon().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getTue().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getWed().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getThu().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
-        expected.getSchedule().getFri().add(new Lesson(0, "8:00", "8:45", new ArrayList<>()));
 
         OptivumTimetableStrategy optivumTimetableStrategy =
                 new OptivumTimetableRoomStrategy(TimetableType.ROOM, 1L, optivumTimetableIndexItemRepository);

@@ -61,7 +61,7 @@ public class TimetableServiceImpl implements TimetableService {
 
     @Override
     public Timetable getTimetableByTimetableIdAndSchoolId(Long timetableId, Long schoolId) {
-        return timetableRepository.findByIdAndSchoolId(schoolId, timetableId);
+        return timetableRepository.findByIdAndSchoolId(timetableId, schoolId);
     }
 
     @Async

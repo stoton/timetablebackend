@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class  OptivumTimetableStrategyUtils {
+class OptivumTimetableStrategyUtils {
 
     static final String OUTER_PART_OF_CLASS = ">-[0-9]/[0-9]";
     static final String SUBJECT_CLASS = "class=\"p\"";
@@ -71,6 +71,8 @@ class  OptivumTimetableStrategyUtils {
         timetable.setSchedule(new Schedule());
 
         buildTimetable(timetable, trs, teacher, timetableType, schoolId, optivumTimetableIndexItemRepository);
+
+        deleteEmptyLessons(timetable);
 
         timetable.setTimestamp(LocalDateTime.now());
 
@@ -133,7 +135,7 @@ class  OptivumTimetableStrategyUtils {
             int num = Integer.valueOf(tds.get(NUMBER_OF_LESSON).text()) - 1;
             String start = tds.get(START).text().split("-")[0].trim();
             String end = tds.get(END).text().split("-")[1].trim();
-            ;
+
 
             if (tdsCount >= MONDAY) {
                 timetable
@@ -175,7 +177,7 @@ class  OptivumTimetableStrategyUtils {
                                 timetableType, schoolId, optivumTimetableIndexItemRepository)));
             }
 
-            if (tdsCount-1 == SATURDAY) {
+            if (tdsCount - 1 == SATURDAY) {
                 timetable
                         .getSchedule()
                         .getSat()
@@ -183,7 +185,7 @@ class  OptivumTimetableStrategyUtils {
                                 timetableType, schoolId, optivumTimetableIndexItemRepository)));
             }
 
-            if (tdsCount-1 == SUNDAY) {
+            if (tdsCount - 1 == SUNDAY) {
                 timetable
                         .getSchedule()
                         .getSun()
@@ -417,6 +419,58 @@ class  OptivumTimetableStrategyUtils {
 
     private static String appendEndOfHtmlAndReplace(String html, int start) {
         return html.substring(start).replaceFirst(STUDENT_CLASS_PURE, TEACHER_CLASS_PURE);
+    }
+
+    private static void deleteEmptyLessons(Timetable timetable) {
+        for (int i = timetable.getSchedule().getMon().size()-1; i >= 0; i--) {
+            System.out.println(timetable.getSchedule().getMon().get(i));
+            if (!timetable.getSchedule().getMon().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getMon().remove(i);
+        }
+
+        for (int i = timetable.getSchedule().getTue().size()-1; i >= 0; i--) {
+            if (!timetable.getSchedule().getTue().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getTue().remove(i);
+        }
+
+        for (int i = timetable.getSchedule().getWed().size()-1; i >= 0; i--) {
+            if (!timetable.getSchedule().getWed().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getWed().remove(i);
+        }
+
+        for (int i = timetable.getSchedule().getThu().size()-1; i >= 0; i--) {
+            if (!timetable.getSchedule().getThu().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getThu().remove(i);
+        }
+
+        for (int i = timetable.getSchedule().getFri().size()-1; i >= 0; i--) {
+            if (!timetable.getSchedule().getFri().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getFri().remove(i);
+        }
+
+        for (int i = timetable.getSchedule().getSat().size()-1; i >= 0; i--) {
+            if (!timetable.getSchedule().getSat().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getSat().remove(i);
+        }
+
+        for (int i = timetable.getSchedule().getSun().size()-1; i >= 0; i--) {
+            if (!timetable.getSchedule().getSun().get(i).getGroups().isEmpty()) {
+                break;
+            }
+            timetable.getSchedule().getSun().remove(i);
+        }
     }
 
     @Data
